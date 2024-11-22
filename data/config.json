@@ -44,6 +44,11 @@
         "title": "Bildinhalt",
         "url": "data/tsne.csv",
         "scale": 0.8
+      },
+      {
+        "title": "Farbe plot",
+        "url": "data/colors.csv",
+        "scale": 0.9
       }
     ]
   },
