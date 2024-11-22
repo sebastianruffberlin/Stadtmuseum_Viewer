@@ -37,7 +37,8 @@
       {
         "title": "Stil",
         "type": "group",
-        "groupKey": "_KI Style Tag 1"
+        "groupKey": "_KI Style Tag 1",
+        "columns": 3
       },
       {
         "title": "Similarity",
