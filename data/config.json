@@ -107,6 +107,12 @@
         "source": "_keywords",
         "display": "column",
         "type": "keywords"
+      },
+      {
+        "name": "Lizenz",
+        "source": "'<a href=https://creativecommons.org/publicdomain/mark/1.0/>Public Domain</a>'",
+        "display": "column",
+        "type": "function"
       }
     ]
   }
