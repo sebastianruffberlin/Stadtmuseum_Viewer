@@ -42,7 +42,8 @@
       },
       {
         "title": "Similarity",
-        "url": "data/tsne.csv"
+        "url": "data/tsne.csv",
+        "scale": 0.9
       }
     ]
   },
