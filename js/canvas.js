@@ -7,7 +7,7 @@ function Canvas() {
     top: 20,
     right: 50,
     bottom: 50,
-    left: 50,
+    left: 120,
   };
 
   var minHeight = 400;
