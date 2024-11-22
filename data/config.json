@@ -31,7 +31,8 @@
       {
         "title": "Emotionen",
         "type": "group",
-        "groupKey": "_KI Emotion"
+        "groupKey": "_KI Emotion",
+        "columns": 3
       },
       {
         "title": "Stil",
