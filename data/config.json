@@ -40,7 +40,7 @@
       },
       {
         "title": "Similarity",
-        "url": "tsne.csv"
+        "url": "data/tsne.csv"
       }
     ]
   },
