@@ -2,7 +2,7 @@
   "project": {
     "name": "Stadtmuseum",
     "quality": 1
-},
+  },
   "loader": {
     "info": "data/info.md",
     "items": "data/data.csv",
