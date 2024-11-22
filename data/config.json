@@ -37,6 +37,10 @@
         "title": "Stil",
         "type": "group",
         "groupKey": "_KI Style Tag 1"
+      },
+      {
+        "title": "Similarity",
+        "url": "tsne.csv"
       }
     ]
   },
