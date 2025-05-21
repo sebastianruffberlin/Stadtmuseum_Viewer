@@ -1,31 +1,3 @@
-//                            ,--.
-//                ,---,   ,--/  /|               .--.--.
-//        ,---.,`--.' |,---,': / '         ,--, /  /    '.
-//       /__./||   :  ::   : '/ /        ,'_ /||  :  /`. /
-//  ,---.;  ; |:   |  '|   '   ,    .--. |  | :;  |  |--`
-// /___/ \  | ||   :  |'   |  /   ,'_ /| :  . ||  :  ;_
-// \   ;  \ ' |'   '  ;|   ;  ;   |  ' | |  . . \  \    `.
-//  \   \  \: ||   |  |:   '   \  |  | ' |  | |  `----.   \
-//   ;   \  ' .'   :  ;|   |    ' :  | | :  ' ;  __ \  \  |
-//    \   \   '|   |  ''   : |.  \|  ; ' |  | ' /  /`--'  /
-//     \   `  ;'   :  ||   | '_\.':  | : ;  ; |'--'.     /
-//      :   \ |;   |.' '   : |    '  :  `--'   \ `--'---'
-//       '---" '---'   ;   |,'    :  ,      .-./
-//                     '---'       `--`----'
-//                ,---,    ,---,.           .---.    ,---,.,-.----.
-//        ,---.,`--.' |  ,'  .' |          /. ./|  ,'  .' |\    /  \
-//       /__./||   :  :,---.'   |      .--'.  ' ;,---.'   |;   :    \
-//  ,---.;  ; |:   |  '|   |   .'     /__./ \ : ||   |   .'|   | .\ :
-// /___/ \  | ||   :  |:   :  |-, .--'.  '   \' .:   :  |-,.   : |: |
-// \   ;  \ ' |'   '  ;:   |  ;/|/___/ \ |    ' ':   |  ;/||   |  \ :
-//  \   \  \: ||   |  ||   :   .';   \  \;      :|   :   .'|   : .  /
-//   ;   \  ' .'   :  ;|   |  |-, \   ;  `      ||   |  |-,;   | |  \
-//    \   \   '|   |  ''   :  ;/|  .   \    .\  ;'   :  ;/||   | ;\  \
-//     \   `  ;'   :  ||   |    \   \   \   ' \ ||   |    \:   ' | \.'
-//      :   \ |;   |.' |   :   .'    :   '  |--" |   :   .':   : :-'
-//       '---" '---'   |   | ,'       \   \ ;    |   | ,'  |   |.'
-//                     `----'          '---"     `----'    `---'
-
 // christopher pietsch
 // @chrispiecom
 // 2015-2018
@@ -37,17 +9,17 @@ var tags;
 var canvas;
 var search;
 var ping;
-var timeline;
+var timeline; // Declared globally
 
 if (Modernizr.webgl && !utils.isMobile()) {
   init();
 }
 
-
 function init() {
+  // Instantiate the individual modules first
   canvas = Canvas();
   search = Search();
-  timeline = Timeline();
+  timeline = Timeline(); // Instantiated here
   ping = utils.ping();
 
   var baseUrl = utils.getDataBaseUrl();
@@ -59,12 +31,20 @@ function init() {
     config.baseUrl = baseUrl;
     utils.initConfig(config);
 
-    Loader(makeUrl(baseUrl.path, config.loader.timeline)).finished(function (timeline) {
-      Loader(makeUrl(baseUrl.path, config.loader.items)).finished(function (data) {
+    // Determine the timeline data URL. If config.loader.timeline is undefined, it defaults to null.
+    var timelineDataUrl = config.loader.timeline ? makeUrl(baseUrl.path, config.loader.timeline) : null;
+
+    // Load timeline data first (if URL exists), then items data
+    Loader(timelineDataUrl).finished(function (_timelineData) { // _timelineData will be the loaded CSV data or an empty array
+      Loader(makeUrl(baseUrl.path, config.loader.items)).finished(function (_data) {
+        data = _data; // Assign to the global 'data' variable
         console.log(data);
 
         utils.clean(data, config.delimiter);
-        
+
+        // Initialize timeline module with the loaded data (or empty array if not loaded)
+        timeline.init(_timelineData || [], config); // Pass loaded data (or empty array) to timeline.init
+
         if(config.filter && config.filter.type === "crossfilter") {
           tags = Crossfilter();
         } else {
@@ -72,7 +52,7 @@ function init() {
         }
         tags.init(data, config);
         search.init();
-        canvas.init(data, timeline, config);
+        canvas.init(data, timeline, config); // Pass the timeline OBJECT here
 
         if (config.loader.layouts) {
           initLayouts(config);
@@ -81,13 +61,8 @@ function init() {
             title: "Time",
             type: "group",
             groupKey: "year"
-          })
+          });
         }
-
-        // setTimeout(function () {
-        //   var idx = 102
-        //   canvas.zoomToImage(data[idx], 100)
-        // }, 100);
 
         LoaderSprites()
           .progress(function (textures) {
@@ -97,7 +72,7 @@ function init() {
                 .filter(d => d.sprite) // Ensure sprite exists
                 .map(d => [d.id, d])
             );
-            
+
             Object.keys(textures).forEach(id => {
               const item = dataMap.get(id);
               if (item) item.sprite.texture = textures[id];
@@ -148,23 +123,10 @@ function init() {
     d3.select(".infobar").classed("sneak", s);
   });
 
-  // d3.selectAll(".navi .button").on("click", function () {
-  //   var that = this;
-  //   var mode = d3.select(this).attr("data");
-  //   canvas.setMode(mode);
-  //   timeline.setDisabled(mode != "time");
-
-  //   d3.selectAll(".navi .button").classed("active", function () {
-  //     return that === this;
-  //   });
-  // });
-
   function initLayouts(config) {
     d3.select(".navi").classed("hide", false);
 
-    //console.log(config.loader.layouts);
     config.loader.layouts.forEach((d, i) => {
-      // d.title = d.title.toLowerCase();
       // legacy fix for time scales
       if (!d.type && !d.url) {
         d.type = "group"
